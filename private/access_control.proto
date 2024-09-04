@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package private;
 
-option go_package = "github.com/ehr-systems/ehr-proto-gen/go/private";
+option go_package = "github.com/kzelealem/proto-gen/go/private";
 
 import "google/api/annotations.proto";
 

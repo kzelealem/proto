@@ -5,67 +5,13 @@ package public;
 import "google/protobuf/empty.proto";
 import "public/common.proto";
 import "public/filters.proto";
-import "public/company.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/ehr-systems/ehr-proto-gen/go/public";
+option go_package = "github.com/kzelealem/proto-gen/go/public";
 
 // UserService provides user-related operations.
 service UserService {
-
-  // Method to register a new company
-  rpc RegisterCompany(RegisterCompanyRequest) returns (SuccessMessage) {
-    option (google.api.http) = {
-      post: "/public/user/companies/register"
-      body: "*"
-    };
-  }
-
-  // Method to retrieve the details of a specific company
-  rpc GetCompany(GetCompanyRequest) returns (GetCompanyResponse) {
-    option (google.api.http) = {
-      get: "/public/user/companies/{id}"
-    };
-  }
-
-  // Method to update company details
-  rpc UpdateCompany(UpdateCompanyRequest) returns (SuccessMessage) {
-    option (google.api.http) = {
-      patch: "/public/user/companies/{id}"
-      body: "*"
-    };
-  }
-
-  // Method to list all companies
-  rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse) {
-    option (google.api.http) = {
-      post: "/public/user/companies/list"
-      body: "*"
-    };
-  }
-
-  // Method to delete a company
-  rpc DeleteCompany(DeleteCompanyRequest) returns (SuccessMessage) {
-    option (google.api.http) = {
-      delete: "/public/user/companies/{id}"
-    };
-  }
-
-  // Authentication
-  rpc Login(LoginRequest) returns (TokenResponse) {
-    option (google.api.http) = {
-      post : "/public/user/login"
-      body : "*"
-    };
-  }
-
-  rpc GetStreamToken(google.protobuf.Empty) returns (StreamTokenResponse) {
-    option (google.api.http) = {
-      get : "/public/user/get_stream_token"
-    };
-  }
-
 
   rpc RefreshToken(RefreshTokenRequest) returns (TokenResponse) {
     option (google.api.http) = {
@@ -111,89 +57,6 @@ service UserService {
     };
   }
 
-  // sms service
-    rpc AddSinchUser(SinchUserRequest) returns (SinchUserResponse) {
-      option (google.api.http) = {
-        post : "/public/user/users/{user_id}/sinch_users"
-        body : "*"
-      };
-    }
-    rpc GetSinchUsers(ListSinchUsersRequest) returns (ListSinchUsersResponse) {
-      option (google.api.http) = {
-        post : "/public/user/sinch_users/list"
-        body : "*"
-      };
-    }
-    
-    rpc SendMessage(SendSmsRequest) returns (SendSmsResponse) {
-      option (google.api.http) = {
-        post : "/public/user/sinch_users/send_sms"
-        body : "*"
-      };
-    }
-
-    rpc GetMessagesByPhoneNumber(ListSmsMessagesByPhoneRequest) returns (ListSmsMessagesResponse) {
-      option (google.api.http) = {
-        post : "/public/user/sms_messages/list"
-        body : "*"
-      };
-    }
-
-    // Delete messages by message id
-    rpc DeleteSMSMessage(DeleteMessageRequest) returns (DeleteMessageResponse) {
-      option (google.api.http) = {
-        delete : "/public/user/sms_messages/{id}"
-      };
-    }
-
-    rpc GetTrashedSinchMessages(ListSmsMessagesBySinchIdRequest) returns (ListSmsMessagesResponse) {
-      option (google.api.http) = {
-        get : "/public/user/sinch_users/trashed_messages"
-      };
-    }
-    
-    rpc GetMessagesBySinchID(ListSmsMessagesBySinchIdRequest) returns (ListSmsMessagesResponse) {
-      option (google.api.http) = {
-        post : "/public/user/sinch_users/sms_messages/list"
-        body : "*"
-      };
-    }
-
-    rpc GetReadMessages(ListSmsMessagesBySinchIdRequest) returns (ListSmsMessagesResponse) {
-      option (google.api.http) = {
-        post : "/public/user/sinch_users/read_messages"
-        body : "*"
-      };
-    }
-
-    rpc GetStarredMessages(ListSmsMessagesBySinchIdRequest) returns (ListSmsMessagesResponse) {
-      option (google.api.http) = {
-        post : "/public/user/sinch_users/starred_messages"
-        body : "*"
-      };
-    }
-
-    rpc SetMessageReadById(SetMessageReadByIdRequest) returns (SetMessageReadByIdResponse) {
-      option (google.api.http) = {
-        post : "/public/user/sinch_users/set_message_read"
-        body : "*"
-      };
-    }
-
-    rpc ToggleMessageStarredById(ToggleMessageStarredByIdRequest) returns (ToggleMessageStarredByIdResponse) {
-      option (google.api.http) = {
-        post : "/public/user/sinch_users/{message_id}/toggle_message_starred"
-        body : "*"
-      };
-    }
-
-    rpc GetUnreadMessages(ListSmsMessagesBySinchIdRequest) returns (ListSmsMessagesResponse) {
-      option (google.api.http) = {
-        post : "/public/user/sinch_users/unread_messages"
-        body : "*"
-      };
-    }
-
     // Password management
     // Initiates the password reset process by sending a verification code to the user's phone
     rpc StartPasswordReset(StartPasswordResetRequest) returns (SuccessMessage) {
@@ -226,72 +89,6 @@ service UserService {
     };
   }
   
-   // Method to list support issues with support messages included
-   rpc ListSupportIssues(ListSupportIssuesRequest) returns (ListSupportIssuesResponse) {
-    option (google.api.http) = {
-      post: "/public/user/support_issues/list"
-      body: "*"
-    };
-  }
-  
-  // Method to create a support issue with a message included
-  rpc CreateSupportIssue(CreateSupportIssueRequest) returns (CreateSupportIssueResponse) {
-    option (google.api.http) = {
-      post: "/public/user/support_issues"
-      body: "*"
-    };
-  }
-  
-  // Method to reply to a support issue by posting a message
-  rpc ReplyToSupportIssue(ReplyToSupportIssueRequest) returns (ReplyToSupportIssueResponse) {
-    option (google.api.http) = {
-      post: "/public/user/support_issues/{issue_id}/reply"
-      body: "*"
-    };
-  }
-  
-  rpc ListSupportMessages(ListSupportMessagesRequest) returns (ListSupportMessagesResponse) {
-    option (google.api.http) = {
-      post: "/public/user/support_messages/list"
-      body: "*"
-    };
-  }
-
-  rpc SendFax(SendFaxRequest) returns (SuccessMessage) {
-    option (google.api.http) = {
-      post: "/public/user/send_fax"
-      body: "*"
-    };
-  }
-
-  rpc RecieveFax(RecieveFaxRequest) returns (SuccessMessage) {
-    option (google.api.http) = {
-      post: "/public/user/recieve_fax"
-      body: "*"
-    };
-  }
-  
-  rpc ListFaxMessages(ListFaxMessagesRequest) returns (ListFaxMessagesResponse) {
-    option (google.api.http) = {
-      post: "/public/user/fax_messages/list"
-      body: "*"
-    };
-  }
-
-  rpc MarkFaxMessagesRead(google.protobuf.Empty) returns (SuccessMessage) {
-    option (google.api.http) = {
-      post: "/public/user/fax_messages/make_all_as_read"
-      body: "*"
-    };
-  }
-
-  rpc MoveFaxMessageToTrash(MoveFaxMessageToTrashRequest) returns (SuccessMessage) {
-    option (google.api.http) = {
-      post: "/public/user/fax_messages/{fax_message_id}/move_to_trash"
-      body: "*"
-    };
-  }
-
 }
 
 message MoveFaxMessageToTrashRequest {

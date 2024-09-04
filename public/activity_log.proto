@@ -2,14 +2,13 @@ syntax = "proto3";
 
 package public;
 
-import "public/user.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 import "public/common.proto";
 import "public/filters.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/ehr-systems/ehr-proto-gen/go/public";
+option go_package = "github.com/kzelealem/proto-gen/go/public";
 
 service ActivityLogService {
   rpc ListActivityLogs(ListActivityLogsRequest)

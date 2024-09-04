@@ -3,9 +3,8 @@ syntax = "proto3";
 package public;
 
 import "google/protobuf/timestamp.proto";
-import "public/config.proto";
 
-option go_package = "github.com/ehr-systems/ehr-proto-gen/go/public";
+option go_package = "github.com/kzelealem/proto-gen/go/public";
 
 message User {
   string id = 1;
@@ -15,7 +14,6 @@ message User {
   string email = 5;
   string phone_number = 6;
   Role role = 7;
-  repeated Program programs = 8;
   google.protobuf.Timestamp created_at = 9;
   string status = 10;
   string company_id = 11;

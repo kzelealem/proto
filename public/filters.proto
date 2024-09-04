@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package public;
 
-option go_package = "github.com/ehr-systems/ehr-proto-gen/go/public";
+option go_package = "github.com/kzelealem/proto-gen/go/public";
 
 message Filters {
   repeated FilterCondition filters = 1;

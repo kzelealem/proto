@@ -8,7 +8,7 @@ import "public/common.proto";
 import "public/filters.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/ehr-systems/ehr-proto-gen/go/public";
+option go_package = "github.com/kzelealem/proto-gen/go/public";
 
 service AccessControlService {
   rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
