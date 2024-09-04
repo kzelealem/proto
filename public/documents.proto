@@ -1,0 +1,368 @@
+syntax = "proto3";
+
+package public;
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "public/common.proto";
+import "public/filters.proto";
+import "public/config.proto";
+
+option go_package = "github.com/ehr-systems/ehr-proto-gen/go/public";
+
+// DocumentService provides document-related operations.
+service DocumentService {
+  // CRUD Operations for Document Management
+  rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse) {
+    option (google.api.http) = {
+      post : "/public/document/documents"
+      body : "*"
+    };
+  }
+  rpc CreateCompanyDocument (CompanyDocumentRequest) returns (CompanyDocumentResponse) {
+    option (google.api.http) = {
+    post: "/public/document/company_documents"
+    body: "*"
+  };
+  }
+  rpc CreateClientDocument (ClientDocumentRequest) returns (ClientDocumentResponse) {
+    option (google.api.http) = {
+    post: "/public/document/client_documents"
+    body: "*"
+  };
+  }
+  rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse) {
+    option (google.api.http) = {
+      post : "/public/document/documents/list"
+      body : "*"
+    };
+  }
+  rpc GettDocumentById(GetDocumentByIdRequest) returns (GetDocumentByIdResponse) {
+    option (google.api.http) = {
+      post : "/public/document/get/{document_id}"
+      body : "*"
+    };
+  }
+
+  rpc ListCompanyDocuments(ListCompanyDocumentsRequest) returns (ListDocumentsResponse) {
+    option (google.api.http) = {
+      post : "/public/document/company_documents/list"
+      body : "*"
+    };
+  }
+  rpc ListClientDocuments(ListClientDocumentsRequest) returns (ListDocumentsResponse) {
+    option (google.api.http) = {
+      post : "/public/document/client_documents/list"
+      body : "*"
+    };
+  }
+  
+  rpc ListClientDocumentsByClientID(ListClientDocumentsByIdRequest) returns (ListDocumentsResponse) {
+    option (google.api.http) = {
+      post : "/public/document/client_documents/{client_id}/list"
+      body : "*"
+    };
+  }
+
+  rpc AddDocumentVersion(AddDocumentVersionRequest) returns (SuccessMessage) {
+    option (google.api.http) = {
+      post : "/public/document/documents/{document_id}/versions"
+      body : "*"
+    };
+  }
+
+  rpc DeleteDocument(DeleteDocumentRequest) returns (SuccessMessage) {
+    option (google.api.http) = {
+      delete : "/public/document/companies/{company_id}/documents/{document_id}"
+    };
+  }
+
+  rpc CreateDocumentCategory(CreateDocumentCategoryRequest)
+      returns (CreateDocumentCategoryResponse) {
+    option (google.api.http) = {
+      post : "/public/document/document_categories"
+      body : "*"
+    };
+  }
+  rpc ListDocumentCategories(ListDocumentCategoriesRequest)
+      returns (ListDocumentCategoriesResponse) {
+    option (google.api.http) = {
+      post : "/public/document/document_categories/list"
+      body : "*"
+    };
+  }
+  rpc CreateDocumentSubCategory (CreateDocumentSubCategoryRequest) returns (CreateDocumentSubCategoryResponse) {
+    option (google.api.http) = {
+    post: "/public/document/document_sub_categories"
+    body: "*"
+    };
+  }
+  rpc DownloadFile(FileDownloadRequest) returns (stream FileDownloadResponse){
+    option (google.api.http) = {
+      get: "/public/document/files"
+   };  
+  }
+  rpc UploadFile(FileUploadRequest) returns (FileUploadResponse){
+    option (google.api.http) = {
+    post: "/public/document/files/upload"
+    body: "*"
+    };
+  }
+  
+  rpc GetPresignedURL(GetPresignedURLRequest) returns (GetPresignedURLResponse){
+    option (google.api.http) = {
+    get: "/public/document/presigned-url"
+    };
+  }
+
+  rpc ListClientPrograms(ListClientProgramsRequest) returns (ListClientProgramResponse) {
+    option (google.api.http) = {
+      post: "/public/documents/client_programs/list"
+      body: "*"
+    };
+  }
+}
+
+// requests
+
+message GetDocumentByIdRequest{
+  string document_id=1;
+}
+
+message GetDocumentByIdResponse{
+  string id = 1;
+  string title = 2;
+  string document_sub_category_id = 3;
+  google.protobuf.Timestamp expiry_date = 4;
+  string document_category_id = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  repeated DocumentVersion document_versions = 8;
+  DocumentVersion document_current_version = 9;
+  repeated Program programs = 10;
+}
+
+
+message ListClientProgramsRequest {
+  string client_id = 1;
+  Filters filters = 2;
+}
+
+message ListClientDocumentsByIdRequest {
+  string client_id = 1;
+  Filters filters = 2;
+}
+
+message ListClientProgramResponse {
+  repeated ProgramListMember programs = 1;
+  PaginationResponse response = 2;
+}
+
+message DeleteCompanyDocumentRequest {
+  string id = 1;
+}
+
+
+message FileUploadRequest {
+  bytes file_content = 1;
+}
+
+
+message ListDocumentsRequest { Filters filters = 1; }
+message ListClientDocumentsRequest { Filters filters = 1; }
+message ListCompanyDocumentsRequest { Filters filters = 1; }
+
+message CreateDocumentRequest {
+  string title = 1;
+  string document_sub_category_id = 2;
+  google.protobuf.Timestamp expiry_date = 3;
+  string document_category_id = 4;
+  string url =5;
+  repeated string program_ids = 6;
+}
+
+message GetDocumentRequest { string id = 1; }
+
+message UpdateDocumentRequest {
+  string id = 1;
+  string title = 2;
+  string document_sub_category_id = 3;
+  string company_id = 4;
+  google.protobuf.Timestamp expiry_date = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  string document_category_id = 8;
+}
+
+message DeleteDocumentRequest { 
+  string company_id = 1; 
+  string document_id = 2; 
+}
+
+message DeleteDocumentSubcategoriesRequest { string id = 1; }
+
+message ListDocumentsResponse {
+  repeated Document documents = 1;
+  PaginationResponse response = 2;
+}
+
+message ListDocumentCategoriesRequest { Filters filters = 1; }
+
+message ListDocumentSubcategoriesRequest { Filters filters = 1; }
+
+message SearchDocumentsRequest { Filters filters = 1; }
+
+message ListDocumentVersionsRequest { string document_id = 1; }
+
+// responses
+
+message CreateDocumentCategoryResponse { string document_category_id = 1; }
+message CreateDocumentCategoryRequest { string name = 1; }
+
+message CreateDocumentResponse { string document_id = 1; }
+
+message FileUploadResponse {
+  string message = 1;
+  string url = 2;
+}
+
+message GetDocumentResponse {
+  string id = 1;
+  string title = 2;
+  string document_sub_category_id = 3;
+  string company_id = 4;
+  google.protobuf.Timestamp expiry_date = 5;
+  string document_category_id = 9;
+  string current_document_version_id = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  repeated DocumentVersion document_versions = 13;
+  DocumentVersion current_document_version = 14;
+}
+
+message UpdateDocumentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteDocumentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message SearchDocumentsResponse {
+  repeated Document document_results = 1;
+  PaginationResponse response = 2;
+}
+
+message ListDocumentVersionsResponse {
+  repeated DocumentVersion document_versions = 1;
+  PaginationResponse response = 2;
+}
+
+message ListDocumentCategoriesResponse {
+  repeated DocumentCategory document_categories = 1;
+  PaginationResponse response = 2;
+}
+
+message ListDocumentSubcategoriesResponse {
+  repeated DocumentSubcategory document_subcategories = 1;
+  PaginationResponse response = 2;
+}
+
+// plain
+
+message DocumentVersion {
+  string id = 1;
+  string document_id = 2;
+  int32 version_number = 3;
+  google.protobuf.Timestamp created_at = 4;
+  string url = 5;
+  string created_by_id = 6;
+  User created_by = 7;
+  string updated_at = 8;
+}
+
+message DocumentCategory {
+  string id = 1;
+  string name = 2;
+  repeated DocumentSubcategory document_sub_categories = 3;
+}
+
+message DocumentSubcategory {
+  string id = 1;
+  string name = 2;
+  string document_category_id = 3;
+}
+
+message CompanyDocumentRequest {
+  string document_id = 1;
+  string company_id = 2;
+}
+
+message CompanyDocumentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ClientDocumentRequest {
+  string client_id = 1;
+  string document_id = 2;
+}
+
+message ClientDocumentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message CompanyClient {
+  string id = 1;
+  string name = 2;
+  google.protobuf.Timestamp date = 3;
+  string phone = 4;
+}
+
+message Document {
+  string id = 1;
+  string title = 2;
+  string document_sub_category_id = 3;
+  string company_id = 4;
+  google.protobuf.Timestamp expiry_date = 5;
+  string document_category_id = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  repeated DocumentVersion document_versions = 9;
+  DocumentVersion document_current_version = 10;
+  repeated Program programs = 11;
+  CompanyClient company_client = 12;
+}
+
+message AddDocumentVersionRequest {
+  string document_id = 1;
+  string url = 2;
+}
+
+message CreateDocumentSubCategoryResponse {
+  string document_sub_category_id = 1;
+}
+
+message CreateDocumentSubCategoryRequest {
+  string name = 1;
+  string category_id = 2;
+}
+
+message FileDownloadRequest {
+  string file_path = 1;
+}
+
+message FileDownloadResponse {
+  bytes file_content = 1;
+}
+
+message GetPresignedURLRequest {
+  string file_key = 1;
+}
+
+message GetPresignedURLResponse {
+  string url = 1;
+}

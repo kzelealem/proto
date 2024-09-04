@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package private;
+
+option go_package = "github.com/ehr-systems/ehr-proto-gen/go/private";
+
+import "google/api/annotations.proto";
+
+service AccessControlService {
+  rpc CheckAccess (CheckAccessRequest) returns (CheckAccessResponse) {
+    option (google.api.http) = {
+      post: "/v1/private/check-access"
+      body: "*"
+    };
+  }
+}
+
+message CheckAccessRequest {
+    string user_id = 1;
+    string resource = 2;
+}
+
+message CheckAccessResponse {
+    bool has_access = 1;
+}

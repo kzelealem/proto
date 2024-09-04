@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package public;
+
+import "google/protobuf/timestamp.proto";
+import "public/config.proto";
+
+option go_package = "github.com/ehr-systems/ehr-proto-gen/go/public";
+
+message User {
+  string id = 1;
+  string first_name = 2;
+  string middle_name = 3;
+  string last_name = 4;
+  string email = 5;
+  string phone_number = 6;
+  Role role = 7;
+  repeated Program programs = 8;
+  google.protobuf.Timestamp created_at = 9;
+  string status = 10;
+  string company_id = 11;
+  string image_url = 12;
+}
+
+message Role {
+  string id = 1;
+  string name = 2;
+  string status = 3;
+  string company_id = 4;
+  repeated Permission permissions = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message PermissionGroup {
+  string name = 1;
+  repeated Permission permissions = 2;
+}
+
+message Permission {
+  string id = 1;
+  string name = 2;
+  string group = 3;
+}
+
+message Address {
+  string id = 1;
+  string country = 2;
+  string address_line1 = 3;
+  string address_line2 = 4;
+  string city = 5;
+  string state = 6;
+  string postal_code = 7;
+  double latitude = 8;
+  double longitude = 9;
+}
+
+message SuccessMessage {
+  bool success = 1;
+  string message = 2;
+}

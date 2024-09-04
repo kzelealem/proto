@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package public;
+
+import "public/user.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "public/common.proto";
+import "public/filters.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/ehr-systems/ehr-proto-gen/go/public";
+
+service ActivityLogService {
+  rpc ListActivityLogs(ListActivityLogsRequest)
+      returns (ListActivityLogsResponse) {
+    option (google.api.http) = {
+      post : "/public/activity_log/activity_logs/list"
+      body : "*"
+    };
+  }
+
+  rpc GetUserActivityLogs(GetUserActivityLogsRequest)
+      returns (ListActivityLogsResponse) {
+    option (google.api.http) = {
+      post : "/public/activity_log/activity_logs/user"
+      body : "*"
+    };
+  }
+}
+
+message ListActivityLogsRequest { Filters filters = 1; }
+
+message GetUserActivityLogsRequest {
+  string user_id = 1;
+  Filters filters = 2;
+}
+
+message ListActivityLogsResponse {
+  repeated ActivityLog activity_logs = 1;
+  PaginationResponse response = 2;
+}
+
+message ActivityLog {
+  string id = 1;
+  string user_id = 2;
+  User user = 3;
+  string action = 4;
+  google.protobuf.Struct request_object = 5;
+  google.protobuf.Struct response_object = 6;
+  string url = 7;
+  string ip_address = 8;
+  google.protobuf.Timestamp created_at = 9;
+}

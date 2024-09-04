@@ -1,0 +1,32 @@
+lint:
+  rules:
+  no_default: true
+  add:
+    - FIELD_NAMES_LOWER_SNAKE_CASE
+    - MESSAGE_NAMES_UPPER_CAMEL_CASE
+    - INDENT
+    - MAX_LINE_LENGTH
+    - SERVICE_NAMES_END_WITH
+    - FILE_NAMES_LOWER_SNAKE_CASE
+    - IMPORTS_SORTED
+    - PACKAGE_NAME_LOWER_CASE
+    - ORDER
+    - PROTO3_FIELDS_AVOID_REQUIRED
+    - PROTO3_GROUPS_AVOID
+    - SYNTAX_CONSISTENT
+    - RPC_NAMES_UPPER_CAMEL_CASE
+    - QUOTE_CONSISTENT
+    - ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH
+
+  rules_option:
+  max_line_length:
+    max_chars: 120
+
+  indent:
+    style: 2
+
+  enum_field_names_zero_value_end_with:
+    suffix: UNSPECIFIED
+
+  service_names_end_with:
+    text: Service

@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package public;
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+import "public/common.proto";
+import "public/filters.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/ehr-systems/ehr-proto-gen/go/public";
+
+service AccessControlService {
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
+    option (google.api.http) = {
+      post : "/public/access-control/roles"
+      body : "*"
+    };
+  }
+
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse) {
+    option (google.api.http) = {
+      patch : "/public/access-control/roles/{id}"
+      body : "*"
+    };
+  }
+
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {
+    option (google.api.http) = {
+      delete : "/public/access-control/roles/{id}"
+    };
+  }
+
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {
+    option (google.api.http) = {
+      post : "/public/access-control/roles/list"
+      body : "*"
+    };
+  }
+
+  rpc ListAvailablePermissions(google.protobuf.Empty)
+      returns (ListPermissionsResponse) {
+    option (google.api.http) = {
+      get : "/public/access-control/permissions"
+    };
+  }
+}
+
+message CreateRoleRequest {
+  string name = 1;
+  repeated string permission_ids = 2;
+}
+
+message CreateRoleResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message UpdateRoleRequest {
+  string id = 1;
+  google.protobuf.StringValue name = 2;
+  repeated string permission_ids = 3;
+}
+
+message UpdateRoleResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteRoleRequest { string id = 1; }
+
+message DeleteRoleResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListRolesRequest { Filters filters = 1; }
+
+message ListRolesResponse {
+  repeated Role roles = 1;
+  PaginationResponse response = 2;
+}
+
+message ListPermissionsResponse {
+  repeated PermissionGroup permission_groups = 1;
+}

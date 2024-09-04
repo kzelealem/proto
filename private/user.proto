@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package private;
+
+option go_package = "github.com/ehr-systems/ehr-proto-gen/go/private";

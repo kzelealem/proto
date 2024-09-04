@@ -1,0 +1,745 @@
+syntax = "proto3";
+
+package public;
+
+import "google/protobuf/empty.proto";
+import "public/common.proto";
+import "public/filters.proto";
+import "public/company.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/ehr-systems/ehr-proto-gen/go/public";
+
+// UserService provides user-related operations.
+service UserService {
+
+  // Method to register a new company
+  rpc RegisterCompany(RegisterCompanyRequest) returns (SuccessMessage) {
+    option (google.api.http) = {
+      post: "/public/user/companies/register"
+      body: "*"
+    };
+  }
+
+  // Method to retrieve the details of a specific company
+  rpc GetCompany(GetCompanyRequest) returns (GetCompanyResponse) {
+    option (google.api.http) = {
+      get: "/public/user/companies/{id}"
+    };
+  }
+
+  // Method to update company details
+  rpc UpdateCompany(UpdateCompanyRequest) returns (SuccessMessage) {
+    option (google.api.http) = {
+      patch: "/public/user/companies/{id}"
+      body: "*"
+    };
+  }
+
+  // Method to list all companies
+  rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse) {
+    option (google.api.http) = {
+      post: "/public/user/companies/list"
+      body: "*"
+    };
+  }
+
+  // Method to delete a company
+  rpc DeleteCompany(DeleteCompanyRequest) returns (SuccessMessage) {
+    option (google.api.http) = {
+      delete: "/public/user/companies/{id}"
+    };
+  }
+
+  // Authentication
+  rpc Login(LoginRequest) returns (TokenResponse) {
+    option (google.api.http) = {
+      post : "/public/user/login"
+      body : "*"
+    };
+  }
+
+  rpc GetStreamToken(google.protobuf.Empty) returns (StreamTokenResponse) {
+    option (google.api.http) = {
+      get : "/public/user/get_stream_token"
+    };
+  }
+
+
+  rpc RefreshToken(RefreshTokenRequest) returns (TokenResponse) {
+    option (google.api.http) = {
+      post : "/public/user/refresh-token"
+      body : "*"
+    };
+  }
+
+  // Current User Information
+  rpc GetCurrentUser(google.protobuf.Empty) returns (GetCurrentUserResponse) {
+    option (google.api.http) = {
+      get : "/public/user/current"
+    };
+  }
+
+  // CRUD Operations for User Management
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post : "/public/user/users"
+      body : "*"
+    };
+  }
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      patch : "/public/user/users/{id}"
+      body : "*"
+    };
+  }
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {
+      delete : "/public/user/users/{id}"
+    };
+  }
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get : "/public/user/users/{id}"
+    };
+  }
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {
+      post : "/public/user/users/list"
+      body : "*"
+    };
+  }
+
+  // sms service
+    rpc AddSinchUser(SinchUserRequest) returns (SinchUserResponse) {
+      option (google.api.http) = {
+        post : "/public/user/users/{user_id}/sinch_users"
+        body : "*"
+      };
+    }
+    rpc GetSinchUsers(ListSinchUsersRequest) returns (ListSinchUsersResponse) {
+      option (google.api.http) = {
+        post : "/public/user/sinch_users/list"
+        body : "*"
+      };
+    }
+    
+    rpc SendMessage(SendSmsRequest) returns (SendSmsResponse) {
+      option (google.api.http) = {
+        post : "/public/user/sinch_users/send_sms"
+        body : "*"
+      };
+    }
+
+    rpc GetMessagesByPhoneNumber(ListSmsMessagesByPhoneRequest) returns (ListSmsMessagesResponse) {
+      option (google.api.http) = {
+        post : "/public/user/sms_messages/list"
+        body : "*"
+      };
+    }
+
+    // Delete messages by message id
+    rpc DeleteSMSMessage(DeleteMessageRequest) returns (DeleteMessageResponse) {
+      option (google.api.http) = {
+        delete : "/public/user/sms_messages/{id}"
+      };
+    }
+
+    rpc GetTrashedSinchMessages(ListSmsMessagesBySinchIdRequest) returns (ListSmsMessagesResponse) {
+      option (google.api.http) = {
+        get : "/public/user/sinch_users/trashed_messages"
+      };
+    }
+    
+    rpc GetMessagesBySinchID(ListSmsMessagesBySinchIdRequest) returns (ListSmsMessagesResponse) {
+      option (google.api.http) = {
+        post : "/public/user/sinch_users/sms_messages/list"
+        body : "*"
+      };
+    }
+
+    rpc GetReadMessages(ListSmsMessagesBySinchIdRequest) returns (ListSmsMessagesResponse) {
+      option (google.api.http) = {
+        post : "/public/user/sinch_users/read_messages"
+        body : "*"
+      };
+    }
+
+    rpc GetStarredMessages(ListSmsMessagesBySinchIdRequest) returns (ListSmsMessagesResponse) {
+      option (google.api.http) = {
+        post : "/public/user/sinch_users/starred_messages"
+        body : "*"
+      };
+    }
+
+    rpc SetMessageReadById(SetMessageReadByIdRequest) returns (SetMessageReadByIdResponse) {
+      option (google.api.http) = {
+        post : "/public/user/sinch_users/set_message_read"
+        body : "*"
+      };
+    }
+
+    rpc ToggleMessageStarredById(ToggleMessageStarredByIdRequest) returns (ToggleMessageStarredByIdResponse) {
+      option (google.api.http) = {
+        post : "/public/user/sinch_users/{message_id}/toggle_message_starred"
+        body : "*"
+      };
+    }
+
+    rpc GetUnreadMessages(ListSmsMessagesBySinchIdRequest) returns (ListSmsMessagesResponse) {
+      option (google.api.http) = {
+        post : "/public/user/sinch_users/unread_messages"
+        body : "*"
+      };
+    }
+
+    // Password management
+    // Initiates the password reset process by sending a verification code to the user's phone
+    rpc StartPasswordReset(StartPasswordResetRequest) returns (SuccessMessage) {
+      option (google.api.http) = {
+        post: "/public/user/password-reset/start"
+        body: "*"
+      };
+    }
+
+    // Confirms the verification code provided by the user
+    rpc ConfirmPasswordReset(ConfirmPasswordResetRequest) returns (SuccessMessage) {
+      option (google.api.http) = {
+        post: "/public/user/password-reset/confirm"
+        body: "*"
+      };
+    }
+
+    // Resets the password after successful verification
+    rpc ResetPassword(ResetPasswordRequest) returns (SuccessMessage) {
+      option (google.api.http) = {
+        post: "/public/user/password-reset/reset"
+        body: "*"
+      };
+    }
+
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {
+    option (google.api.http) = {
+      post : "/public/user/change-password"
+      body : "*"
+    };
+  }
+  
+   // Method to list support issues with support messages included
+   rpc ListSupportIssues(ListSupportIssuesRequest) returns (ListSupportIssuesResponse) {
+    option (google.api.http) = {
+      post: "/public/user/support_issues/list"
+      body: "*"
+    };
+  }
+  
+  // Method to create a support issue with a message included
+  rpc CreateSupportIssue(CreateSupportIssueRequest) returns (CreateSupportIssueResponse) {
+    option (google.api.http) = {
+      post: "/public/user/support_issues"
+      body: "*"
+    };
+  }
+  
+  // Method to reply to a support issue by posting a message
+  rpc ReplyToSupportIssue(ReplyToSupportIssueRequest) returns (ReplyToSupportIssueResponse) {
+    option (google.api.http) = {
+      post: "/public/user/support_issues/{issue_id}/reply"
+      body: "*"
+    };
+  }
+  
+  rpc ListSupportMessages(ListSupportMessagesRequest) returns (ListSupportMessagesResponse) {
+    option (google.api.http) = {
+      post: "/public/user/support_messages/list"
+      body: "*"
+    };
+  }
+
+  rpc SendFax(SendFaxRequest) returns (SuccessMessage) {
+    option (google.api.http) = {
+      post: "/public/user/send_fax"
+      body: "*"
+    };
+  }
+
+  rpc RecieveFax(RecieveFaxRequest) returns (SuccessMessage) {
+    option (google.api.http) = {
+      post: "/public/user/recieve_fax"
+      body: "*"
+    };
+  }
+  
+  rpc ListFaxMessages(ListFaxMessagesRequest) returns (ListFaxMessagesResponse) {
+    option (google.api.http) = {
+      post: "/public/user/fax_messages/list"
+      body: "*"
+    };
+  }
+
+  rpc MarkFaxMessagesRead(google.protobuf.Empty) returns (SuccessMessage) {
+    option (google.api.http) = {
+      post: "/public/user/fax_messages/make_all_as_read"
+      body: "*"
+    };
+  }
+
+  rpc MoveFaxMessageToTrash(MoveFaxMessageToTrashRequest) returns (SuccessMessage) {
+    option (google.api.http) = {
+      post: "/public/user/fax_messages/{fax_message_id}/move_to_trash"
+      body: "*"
+    };
+  }
+
+}
+
+message MoveFaxMessageToTrashRequest {
+  string fax_message_id = 1;
+}
+
+message ListFaxMessagesRequest{
+  string status = 1;
+  Filters filters = 2;
+}
+
+message ListFaxMessagesResponse{
+  repeated FaxMessage fax_messages = 1;
+  PaginationResponse response = 2;
+}
+
+message FaxMessage {
+  string id = 1;
+  int64 phaxio_fax_id = 2;
+  string phone_number = 3;
+  string file_url = 4;
+  string direction = 5;
+  string from_phone = 6;
+  string to_phone = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  FaxAccount from_fax_account = 10;
+  FaxAccount to_fax_account = 11;
+  string status = 13;
+}
+
+message FaxAccount {
+  string id = 1;
+  string user_id = 2;
+  string phone_number = 3;
+  string city = 4;
+  string state = 5;
+  string country = 6;
+  double cost = 7;
+  google.protobuf.Timestamp last_billed_at = 8;
+  google.protobuf.Timestamp provisioned_at = 9;
+  string callback_url = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  User user = 13;
+}
+
+
+message RecieveFaxRequest {
+  FaxObject fax = 1;
+  string event_type = 2;
+  bytes file = 3;
+}
+
+message FaxObject {
+  int32 id = 1;
+  string direction = 2;
+  int32 num_pages = 3;
+  string status = 4;
+  bool is_test = 5;
+  string created_at = 6;
+  string caller_id = 7;
+  string from_number = 8;
+  string completed_at = 9;
+  string caller_name = 10;
+  int32 cost = 11;
+  
+  message Tags {
+    string order_id = 1;
+  }
+  Tags tags = 12;
+  
+  message Recipient {
+    string phone_number = 1;
+    string status = 2;
+    int32 retry_count = 3;
+    string completed_at = 4;
+    int32 bitrate = 5;
+    int32 resolution = 6;
+    string error_type = 7;
+    string error_id = 8;
+    string error_message = 9;
+  }
+  repeated Recipient recipients = 13;
+  
+  string to_number = 14;
+  string error_id = 15;
+  string error_type = 16;
+  string error_message = 17;
+  // repeated google.protobuf.Any barcodes = 18;
+}
+
+message SendFaxRequest {
+  string to_number = 1;
+  bytes file = 2; // File data should be sent as bytes
+}
+
+
+message ListSupportMessagesRequest{
+  string issue_id = 1;
+  Filters filters = 2;
+}
+
+message ListSupportMessagesResponse{
+  repeated SupportMessageWithUserDetails support_messages = 1;
+  PaginationResponse response = 2;
+}
+
+// 
+
+message ListSupportIssuesRequest {
+  Filters filters = 1;
+}
+
+message ListSupportIssuesResponse {
+  repeated SupportIssueWithMessages support_issues = 1;
+  PaginationResponse response = 2;
+}
+
+message SupportIssueWithMessages {
+  string id = 1;
+  string company_id = 2;
+  string title = 3;
+  string description = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  google.protobuf.Timestamp deleted_at = 7;
+  
+  repeated SupportMessageWithUserDetails support_messages = 8;
+}
+
+message SupportIssue {
+  string id = 1;
+  string company_id = 2;
+
+  string title = 3;
+  string description = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  google.protobuf.Timestamp deleted_at = 7;
+}
+
+
+
+message SupportMessageWithUserDetails {
+  string id = 1;
+  string company_id = 2;
+  string message = 3;
+  User user = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  google.protobuf.Timestamp deleted_at = 7;
+  string user_id = 8;
+  string issue_id = 9;
+}
+
+message SupportMessage {
+  string id = 1;
+  string issue_id = 2;
+  string user_id = 3;
+
+  string message = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  google.protobuf.Timestamp deleted_at = 7;
+}
+
+// mark
+message CreateSupportIssueRequest {
+  string title = 1;
+  string description = 2;
+  string message = 3;
+}
+
+
+
+message CreateSupportIssueResponse {
+  SupportIssue support_issue = 1;
+}
+
+
+message ReplyToSupportIssueRequest {
+  string issue_id = 1;
+  string message = 2;
+}
+
+message ReplyToSupportIssueResponse {
+  string message_id = 1;
+}
+// 
+message SetMessageReadByIdRequest {
+  string message_id = 1;
+}
+
+message SetMessageReadByIdResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ToggleMessageStarredByIdRequest {
+  string message_id = 1;
+}
+
+message ToggleMessageStarredByIdResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+
+message GetMessagesByPhoneNumberRequest {
+  string from = 1;
+  string to = 2;
+}
+
+message SMSMessageResponse {
+    string id = 1;
+    repeated string to = 2;
+    string from = 3;
+    bool canceled = 4;
+    string body = 5;
+    string type = 6;
+    string created_at = 7;
+    string modified_at = 8;
+    string delivery_report = 9;
+    string expire_at = 10;
+    bool flash_message = 11;
+}
+
+message SendSmsRequest {
+  repeated string sinch_user_ids = 1;
+  string message_text = 2;
+}
+
+message SendSmsResponse {
+ bool success = 1; 
+ string message = 2;
+}
+
+message SinchUserRequest {
+  string user_id = 1;
+  string phone_number = 2;
+}
+
+message SinchUserResponse{
+  string id = 1;
+  User user = 2;
+  string user_id = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  google.protobuf.Timestamp deleted_at = 6;
+  string phone_number = 7;
+}
+
+message SinchUser {
+  string id = 1;
+  User user = 2;
+  string user_id = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  google.protobuf.Timestamp deleted_at = 6;
+  string phone_number = 7;
+}
+
+message SMSMessage {
+  string id = 1;
+  string message = 2;
+  SinchUser sinch_user = 3;
+  string sinch_user_id = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  google.protobuf.Timestamp deleted_at = 7;
+  repeated string to = 8;
+  string from = 9;
+  bool canceled = 10;
+  string body = 11;
+  string type = 12;
+  string modified_at = 13;
+  string delivery_report = 14;
+  string expire_at = 15;
+  bool flash_message = 16;
+  repeated SinchUser to_sinch_users = 17;
+  SinchUser from_sinch_user = 18;
+  string external_sinch_id = 19;
+  string user_id = 20;
+  User user = 21;
+  bool is_deleted = 22;
+  bool is_read = 23;
+  bool is_starred = 24;
+}
+
+message RegisterCompanyResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message TokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message StreamTokenResponse{
+  string token = 1;
+}
+
+message StreamTokenRequest{}
+
+message ForgotPasswordRequest {
+  oneof identifier {
+    string email = 1;
+    string phone_number = 2;
+  }
+}
+
+message ForgotPasswordResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ChangePasswordRequest {
+  string old_password = 1;
+  string new_password = 2;
+}
+
+message ChangePasswordResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message RefreshTokenRequest { string refresh_token = 1; }
+
+message GetCurrentUserResponse { User user = 1; }
+
+message CreateUserRequest {
+  string first_name = 1;
+  string middle_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string phone_number = 5;
+  string image_url = 6;
+  string role_id = 7;
+  repeated string program_ids = 8;
+}
+
+message CreateUserResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message UpdateUserRequest {
+  string id = 1;
+  optional string first_name = 2;
+  optional string middle_name = 3;
+  optional string last_name = 4;
+  optional string email = 5;
+  optional string phone_number = 6;
+  optional string image_url = 7;
+  optional string role_id = 8;
+  repeated string program_ids = 9;
+}
+
+message UpdateUserResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteUserRequest { string id = 1; }
+
+message DeleteUserResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetUserRequest { string id = 1; }
+
+message GetUserResponse { User user = 1; }
+
+message ListUsersRequest { Filters filters = 1; }
+
+message ListUsersResponse {
+  repeated User users = 1;
+  PaginationResponse response = 2;
+}
+
+message ListSinchUsersResponse {
+  repeated SinchUser sinch_users = 1;
+  PaginationResponse response = 2;
+}
+
+message ListSinchUsersRequest {
+  Filters filters = 1;
+}
+message ListSmsMessagesByPhoneRequest {
+  Filters filters = 1;
+}
+
+message ListSmsMessagesBySinchIdRequest {
+  Filters filters = 1;
+}
+message ListSmsMessagesResponse {
+  repeated SMSMessage messages = 1;
+  PaginationResponse response = 2;
+}
+
+enum PasswordResetMethod {
+  METHOD_UNSPECIFIED = 0;
+  PASSWORD_RESET_METHOD_EMAIL = 1;
+  PASSWORD_RESET_METHOD_SMS = 2;
+}
+
+// Request to start the password reset process
+message StartPasswordResetRequest {
+  PasswordResetMethod method = 1;
+  oneof contact_info {
+    string email = 2;
+    string phone_number = 3;
+  }
+}
+
+// Request to confirm the verification code
+message ConfirmPasswordResetRequest {
+  PasswordResetMethod method = 1;
+  oneof contact_info {
+    string email = 2;
+    string phone_number = 3;
+  }
+  string code = 4;
+}
+
+// Request to reset the password
+message ResetPasswordRequest {
+  PasswordResetMethod method = 1;
+  oneof contact_info {
+    string email = 2;
+    string phone_number = 3;
+  }
+  string new_password = 4;
+}
+
+message DeleteMessageRequest {
+  string id = 1;
+}
+
+message DeleteMessageResponse {
+  bool success = 1;
+  string message = 2;
+}

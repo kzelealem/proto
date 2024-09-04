@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package public;
+
+option go_package = "github.com/ehr-systems/ehr-proto-gen/go/public";
+
+message Filters {
+  repeated FilterCondition filters = 1;
+  repeated OrderCondition order = 2;
+  Pagination pagination = 3;
+}
+
+message PaginationResponse {
+  uint32 total = 1;
+  uint32 page = 2;
+  uint32 per_page = 3;
+}
+
+message FilterCondition {
+  string field = 1;
+  oneof condition {
+    EqualCondition equal = 2;
+    NotEqualCondition not_equal = 3;
+    InCondition in = 4;
+    NotInCondition not_in = 5;
+    BetweenCondition between = 6;
+    LikeCondition like = 7;
+  }
+
+  message EqualCondition { ConditionValue value = 1; }
+
+  message NotEqualCondition { ConditionValue value = 1; }
+
+  message InCondition { repeated ConditionValue values = 1; }
+
+  message NotInCondition { repeated ConditionValue values = 1; }
+
+  message BetweenCondition {
+    BetweenValue from = 1;
+    BetweenValue to = 2;
+  }
+
+  message LikeCondition { string value = 1; }
+
+  message ConditionValue {
+    oneof value {
+      double float64_value = 1;
+      string string_value = 2;
+      int64 timestamp_value = 3;
+    }
+  }
+
+  message BetweenValue {
+    oneof value {
+      double float64_value = 1;
+      int64 timestamp_value = 2;
+    }
+  }
+}
+
+message OrderCondition {
+  string field = 1;
+  OrderType order_type = 2;
+
+  enum OrderType {
+    UNSPECIFIED = 0;
+    ASC = 1;
+    DESC = 2;
+  }
+}
+
+message Pagination {
+  uint32 page = 1;
+  uint32 per_page = 2;
+}

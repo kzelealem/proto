@@ -1,0 +1,96 @@
+name: Proto Build and Deploy
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ehr-proto Repository
+        uses: actions/checkout@v4
+        with:
+          path: ehr-proto
+
+      - name: Checkout ehr-proto-gen Repository
+        uses: actions/checkout@v4
+        with:
+          repository: ehr-systems/ehr-proto-gen
+          token: ${{ secrets.GIT_PAT }}
+          path: ehr-proto-gen
+        
+      - name: Set up Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install Protobuf Compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
+
+      - name: Install Dart Protobuf Plugin
+        run: |
+          dart pub global activate protoc_plugin
+
+      - name: Add Dart Protobuf Plugin to PATH
+        run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '^1.22.1'
+
+      - name: Install Go Protobuf Plugins
+        run: |
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+      - name: Add Go bin to PATH
+        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+      - name: Install Go Protobuf Plugins
+        run: |
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+          go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
+          go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
+
+      - name: Update Go Version in go.mod
+        run: |
+          cd /home/runner/work/ehr-proto/ehr-proto/ehr-proto-gen
+          go mod edit -go=1.22.1
+  
+      - name: Update Go Dependencies
+        run: |
+          cd /home/runner/work/ehr-proto/ehr-proto/ehr-proto-gen
+          go get -u ./...
+          go mod tidy
+      
+      - name: Run Build Scripts
+        run: |
+          chmod +x /home/runner/work/ehr-proto/ehr-proto/ehr-proto/dart-build.sh /home/runner/work/ehr-proto/ehr-proto/ehr-proto/go-build.sh /home/runner/work/ehr-proto/ehr-proto/ehr-proto/swagger-build.sh
+          /home/runner/work/ehr-proto/ehr-proto/ehr-proto/dart-build.sh /home/runner/work/ehr-proto/ehr-proto/ehr-proto /home/runner/work/ehr-proto/ehr-proto/ehr-proto-gen/dart/ehr_proto_gen
+          /home/runner/work/ehr-proto/ehr-proto/ehr-proto/go-build.sh /home/runner/work/ehr-proto/ehr-proto/ehr-proto /home/runner/work/ehr-proto/ehr-proto/ehr-proto-gen/go
+          /home/runner/work/ehr-proto/ehr-proto/ehr-proto/swagger-build.sh /home/runner/work/ehr-proto/ehr-proto/ehr-proto /home/runner/work/ehr-proto/ehr-proto/ehr-proto-gen/swagger
+
+      - name: Update Dart pubspec.yml
+        run: |
+          VERSION=${GITHUB_REF/refs\/tags\/v/}  # Remove 'v' from the tag
+          sed -i "s/version:.*/version: $VERSION/g" /home/runner/work/ehr-proto/ehr-proto/ehr-proto-gen/dart/ehr_proto_gen/pubspec.yaml
+
+      - name: Commit, Tag, and Push Changes in ehr-proto-gen
+        run: |
+          cd /home/runner/work/ehr-proto/ehr-proto/ehr-proto-gen
+          git config user.name 'GitHub Actions'
+          git config user.email 'actions@github.com'
+          git add -A
+          git commit -m "Auto-generated code for ${GITHUB_REF/refs\/tags\/v/}"
+          git tag -a "${GITHUB_REF/refs\/tags\/}" -m "Auto-generated tag ${GITHUB_REF/refs\/tags\/}"
+          git push origin main
+          git push origin "${GITHUB_REF/refs\/tags\/}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_PAT }}
+  
